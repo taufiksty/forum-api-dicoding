@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /* eslint-disable no-mixed-spaces-and-tabs */
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
@@ -61,8 +62,8 @@ class ReplyRepositoryPostgres extends ReplyRepository {
 		// store reply with date ISO string if any comment, if not store empty array
 		const replies = result.rowCount
 			? result.rows.map((reply) => ({
-				...reply,
-				date: reply.date.toISOString(),
+					...reply,
+					date: reply.date.toISOString(),
 			  }))
 			: [];
 

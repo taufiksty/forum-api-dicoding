@@ -1,3 +1,5 @@
+/* eslint-disable function-paren-newline */
+/* eslint-disable implicit-arrow-linebreak */
 const UserRepository = require('../../../Domains/users/UserRepository');
 const AuthenticationRepository = require('../../../Domains/authentications/AuthenticationRepository');
 const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager');
@@ -30,15 +32,19 @@ describe('GetAuthenticationUseCase', () => {
 			.mockImplementation(() => Promise.resolve());
 		mockAuthenticationTokenManager.createAccessToken = jest
 			.fn()
-			.mockImplementation(() => Promise.resolve(mockedAuthentication.accessToken));
+			.mockImplementation(() =>
+				Promise.resolve(mockedAuthentication.accessToken),
+			);
 		mockAuthenticationTokenManager.createRefreshToken = jest
 			.fn()
-			.mockImplementation(() => Promise.resolve(mockedAuthentication.refreshToken));
+			.mockImplementation(() =>
+				Promise.resolve(mockedAuthentication.refreshToken),
+			);
 		mockUserRepository.getIdByUsername = jest
 			.fn()
 			.mockImplementation(() => Promise.resolve('user-123'));
 		mockAuthenticationRepository.addToken = jest
-			.fn()
+			.fn(() => Promise.resolve())
 			.mockImplementation(() => Promise.resolve());
 
 		// create use case instance
