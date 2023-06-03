@@ -1,4 +1,4 @@
-const Thread = require('../Thread');
+const DetailThread = require('../DetailThread');
 
 describe('a DetailThread entities', () => {
 	it('should throw error when payload did not contain needed property', async () => {
@@ -11,8 +11,8 @@ describe('a DetailThread entities', () => {
 		};
 
 		// Action and Assert
-		expect(() => new Thread(payload)).toThrowError(
-			'THREAD.NOT_CONTAIN_NEEDED_PROPERTY',
+		expect(() => new DetailThread(payload)).toThrowError(
+			'DETAIL_THREAD.NOT_CONTAIN_NEEDED_PROPERTY',
 		);
 	});
 
@@ -28,8 +28,8 @@ describe('a DetailThread entities', () => {
 		};
 
 		// Action and Assert
-		expect(() => new Thread(payload)).toThrowError(
-			'THREAD.NOT_MEET_DATA_TYPE_SPESIFICATION',
+		expect(() => new DetailThread(payload)).toThrowError(
+			'DETAIL_THREAD.NOT_MEET_DATA_TYPE_SPESIFICATION',
 		);
 	});
 
@@ -59,7 +59,9 @@ describe('a DetailThread entities', () => {
 
 		// Action
 		// eslint-disable-next-line object-curly-newline
-		const { id, title, body, date, username, comments } = new Thread(payload);
+		const { id, title, body, date, username, comments } = new DetailThread(
+			payload,
+		);
 
 		// Assert
 		expect(id).toEqual(payload.id);

@@ -3,7 +3,7 @@
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const GetDetailThreadUseCase = require('../GetDetailThreadUseCase');
-const Thread = require('../../../Domains/threads/entities/Thread');
+const DetailThread = require('../../../Domains/threads/entities/DetailThread');
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
 
 describe('GetDetailThreadUseCase', () => {
@@ -13,7 +13,7 @@ describe('GetDetailThreadUseCase', () => {
 		const mockThreadRepository = new ThreadRepository();
 		const mockCommentRepository = new CommentRepository();
 		const mockReplyRepository = new ReplyRepository();
-		const mockedThread = new Thread({
+		const mockedThread = new DetailThread({
 			id: 'thread-123',
 			title: 'sebuah thread',
 			body: 'sebuah body thread',
@@ -51,9 +51,7 @@ describe('GetDetailThreadUseCase', () => {
 		const { comments, ...threadWithoutComments } = mockedThread;
 
 		// Mocking
-		mockThreadRepository.verifyThreadById = jest
-			.fn()
-			.mockImplementation(() => Promise.resolve());
+		mockThreadRepository.verifyThreadById = jest.fn(() => Promise.resolve());
 		mockCommentRepository.getCommentsByThreadId = jest
 			.fn()
 			.mockImplementation(() =>
@@ -115,7 +113,7 @@ describe('GetDetailThreadUseCase', () => {
 
 		// Assert
 		expect(getDetailThread).toEqual(
-			new Thread({
+			new DetailThread({
 				id: 'thread-123',
 				title: 'sebuah thread',
 				body: 'sebuah body thread',

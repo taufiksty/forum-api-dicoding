@@ -125,8 +125,9 @@ describe('ThreadRepositoryPostgres', () => {
 				pool,
 				fakeIdGenerator,
 			);
+			const dateThread = new Date();
 			await UsersTableTestHelper.addUser({});
-			await ThreadsTableTestHelper.addThread({});
+			await ThreadsTableTestHelper.addThread({ date: dateThread });
 
 			// Action
 			const getThreadById = await threadRepositoryPostgres.getThreadById(
@@ -138,7 +139,7 @@ describe('ThreadRepositoryPostgres', () => {
 				id: 'thread-123',
 				title: 'New Thread',
 				body: 'This is a new thread',
-				date: '2021-08-08T07:19:09.775Z',
+				date: dateThread.toISOString(),
 				username: 'dicoding',
 			});
 		});

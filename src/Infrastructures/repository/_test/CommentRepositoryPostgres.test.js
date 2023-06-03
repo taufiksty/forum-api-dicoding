@@ -136,15 +136,17 @@ describe('CommentRepositoryPostgres', () => {
 			// Arrange
 			const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
 			const threadId = 'thread-123';
+			const dateComment1 = new Date();
+			const dateComment2 = new Date();
 			await UsersTableTestHelper.addUser({});
 			await ThreadsTableTestHelper.addThread({});
-			await CommentsTableTestHelper.addComment({});
+			await CommentsTableTestHelper.addComment({ date: dateComment1 });
 			await CommentsTableTestHelper.addComment({
 				id: 'comment-234',
 				newComment: 'new comment',
 				threadId: 'thread-123',
 				userId: 'user-123',
-				date: '2021-08-08T07:26:21.338Z',
+				date: dateComment2,
 			});
 			await CommentsTableTestHelper.deleteCommentById('comment-234');
 
@@ -157,14 +159,14 @@ describe('CommentRepositoryPostgres', () => {
 				{
 					id: 'comment-123',
 					username: 'dicoding',
-					date: '2021-08-08T07:22:33.555Z',
+					date: dateComment1.toISOString(),
 					content: 'a comment',
 					is_delete: '0',
 				},
 				{
 					id: 'comment-234',
 					username: 'dicoding',
-					date: '2021-08-08T07:26:21.338Z',
+					date: dateComment2.toISOString(),
 					content: 'new comment',
 					is_delete: '1',
 				},

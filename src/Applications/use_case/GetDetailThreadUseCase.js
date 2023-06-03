@@ -1,5 +1,7 @@
 /* eslint-disable camelcase */
-const Thread = require('../../Domains/threads/entities/Thread');
+const DetailComment = require('../../Domains/comments/entities/DetailComment');
+const DetailReply = require('../../Domains/replies/entities/DetailReply');
+const DetailThread = require('../../Domains/threads/entities/DetailThread');
 
 class GetDetailThreadUseCase {
 	constructor({ threadRepository, commentRepository, replyRepository }) {
@@ -17,37 +19,23 @@ class GetDetailThreadUseCase {
 			threadId,
 		);
 
-		const commentsCheckIsDelete = comments.map((comment) => {
-			const { is_delete, ...commentData } = comment;
-			if (is_delete === '1') {
-				return { ...commentData, content: '**komentar telah dihapus**' };
-			}
-			return commentData;
-		});
+		getThread.comments = comments.map((comment) => new DetailComment(comment));
 
 		const commentAndReplies = await Promise.all(
-			commentsCheckIsDelete.map(async (comment) => {
-				const replies = await this._replyRepository.getRepliesByCommentId(
+			getThread.comments.map(async (comment) => {
+				let replies = await this._replyRepository.getRepliesByCommentId(
 					comment.id,
 				);
 
 				if (replies.length > 0) {
-					const repliesCheckIsDelete = replies.map((reply) => {
-						const { is_delete, ...replyProp } = reply;
-						if (is_delete === '1') {
-							return { ...replyProp, content: '**balasan telah dihapus**' };
-						}
-						return replyProp;
-					});
-
-					return { ...comment, replies: repliesCheckIsDelete };
+					replies = replies.map((reply) => new DetailReply(reply));
 				}
 
 				return { ...comment, replies };
 			}),
 		);
 
-		return new Thread({
+		return new DetailThread({
 			...getThread,
 			comments: commentAndReplies,
 		});

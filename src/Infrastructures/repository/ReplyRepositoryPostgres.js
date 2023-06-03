@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const ReplyRepository = require('../../Domains/replies/ReplyRepository');
@@ -12,11 +13,10 @@ class ReplyRepositoryPostgres extends ReplyRepository {
 
 	async addReply({ userId, commentId, content }) {
 		const id = `reply-${this._idGenerator()}`;
-		const date = new Date().toISOString();
 
 		const query = {
-			text: 'INSERT INTO replies VALUES($1, $2, $3, $4, $5, $6) RETURNING id, content, owner',
-			values: [id, content, commentId, userId, date, '0'],
+			text: 'INSERT INTO replies(id, content, comment_id, owner, is_delete) VALUES($1, $2, $3, $4, $5) RETURNING id, content, owner',
+			values: [id, content, commentId, userId, '0'],
 		};
 
 		const result = await this._pool.query(query);
@@ -58,7 +58,15 @@ class ReplyRepositoryPostgres extends ReplyRepository {
 
 		const result = await this._pool.query(query);
 
-		return result.rows;
+		// store reply with date ISO string if any comment, if not store empty array
+		const replies = result.rowCount
+			? result.rows.map((reply) => ({
+				...reply,
+				date: reply.date.toISOString(),
+			  }))
+			: [];
+
+		return replies;
 	}
 
 	async deleteReply(id) {
