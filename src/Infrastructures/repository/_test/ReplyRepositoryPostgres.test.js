@@ -142,16 +142,18 @@ describe('ReplyRepositoryPostgres', () => {
 			// Arrange
 			const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 			const commentId = 'comment-123';
+			const dateReply1 = new Date();
+			const dateReply2 = new Date();
 			await UsersTableTestHelper.addUser({});
 			await ThreadsTableTestHelper.addThread({});
 			await CommentsTableTestHelper.addComment({});
-			await RepliesTableTestHelper.addReply({});
+			await RepliesTableTestHelper.addReply({ date: dateReply1 });
 			await RepliesTableTestHelper.addReply({
 				id: 'reply-234',
 				content: 'new reply',
 				commentId: 'comment-123',
 				owner: 'user-123',
-				date: '2021-08-08T08:07:01.522Z',
+				date: dateReply2,
 			});
 			await RepliesTableTestHelper.deleteReply('reply-234');
 
@@ -164,14 +166,14 @@ describe('ReplyRepositoryPostgres', () => {
 				{
 					id: 'reply-123',
 					content: 'a reply',
-					date: '2021-08-08T07:59:48.766Z',
+					date: dateReply1.toISOString(),
 					username: 'dicoding',
 					is_delete: '0',
 				},
 				{
 					id: 'reply-234',
 					content: 'new reply',
-					date: '2021-08-08T08:07:01.522Z',
+					date: dateReply2.toISOString(),
 					username: 'dicoding',
 					is_delete: '1',
 				},

@@ -1,31 +1,29 @@
 {
-    "env": {
-        "browser": true,
-        "commonjs": true,
-        "es2021": true,
-        "jest": true
-    },
-    "extends": [
-        "airbnb-base"
-    ],
-    "parserOptions": {
-        "ecmaVersion": 12
-    },
-    "rules": {
-        "linebreak-style": ["error", "windows"],
-        "indent": [2, "tab"],
-        "no-tabs": "off",
-        "no-underscore-dangle": "off",
-        "class-methods-use-this": "off",
-        "operator-linebreak": [
-            "error",
-            "after",
-            {
-                "overrides": {
-                    ":": "before"
-                }
-            }
-        ]
-
-  }
+	"env": {
+		"browser": true,
+		"commonjs": true,
+		"es2021": true,
+		"jest": true
+	},
+	"extends": ["airbnb-base"],
+	"parserOptions": {
+		"ecmaVersion": 12
+	},
+	"rules": {
+		"linebreak-style": ["error", "windows"],
+		"indent": [2, "tab"],
+		"no-tabs": "off",
+		"no-underscore-dangle": "off",
+		"class-methods-use-this": "off",
+		"operator-linebreak": [
+			"error",
+			"after",
+			{
+				"overrides": {
+					":": "before",
+					"?": "before"
+				}
+			}
+		]
+	}
 }

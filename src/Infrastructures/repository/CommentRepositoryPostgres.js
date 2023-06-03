@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+/* eslint-disable no-mixed-spaces-and-tabs */
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const CommentRepository = require('../../Domains/comments/CommentRepository');
@@ -12,16 +14,15 @@ class CommentRepositoryPostgres extends CommentRepository {
 
 	async addComment(userId, threadId, newComment) {
 		const id = `comment-${this._idGenerator()}`;
-		const date = new Date().toISOString();
 
 		const query = {
-			text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5, $6) RETURNING id, content, owner',
-			values: [id, newComment, threadId, userId, date, '0'],
+			text: 'INSERT INTO comments(id, content, thread_id, owner, is_delete) VALUES($1, $2, $3, $4, $5) RETURNING id, content, owner',
+			values: [id, newComment, threadId, userId, '0'],
 		};
 
 		const result = await this._pool.query(query);
 
-		return new AddedComment({ ...result.rows[0] });
+		return new AddedComment(result.rows[0]);
 	}
 
 	async verifyCommentById(commentId) {
@@ -57,7 +58,15 @@ class CommentRepositoryPostgres extends CommentRepository {
 
 		const result = await this._pool.query(query);
 
-		return result.rows;
+		// store comment with date ISO string if any comment, if not store empty array
+		const comments = result.rowCount
+			? result.rows.map((comment) => ({
+					...comment,
+					date: comment.date.toISOString(),
+			  }))
+			: [];
+
+		return comments;
 	}
 
 	async deleteComment(commentId) {
