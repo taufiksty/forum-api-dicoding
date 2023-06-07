@@ -162,7 +162,6 @@ describe('/threads endpoint', () => {
 	});
 
 	describe('when GET /threads/{threadId}', () => {
-		jest.setTimeout(10000);
 		it('should response 200 and return a thread detail with comments and replies if any', async () => {
 			// Arrange
 			const server = await createServer(container);
