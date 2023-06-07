@@ -88,7 +88,7 @@ class CommentRepositoryPostgres extends CommentRepository {
 
 		const result = await this._pool.query(query);
 
-		return result.rows[0].like_count;
+		return Number(result.rows[0].like_count);
 	}
 
 	async updateLikesComment(commentId, userId) {
