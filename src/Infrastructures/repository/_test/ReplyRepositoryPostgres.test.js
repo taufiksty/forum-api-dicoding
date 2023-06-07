@@ -143,7 +143,7 @@ describe('ReplyRepositoryPostgres', () => {
 			const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 			const commentId = 'comment-123';
 			const dateReply1 = new Date();
-			const dateReply2 = new Date();
+			const dateReply2 = new Date(dateReply1.getTime() + 1000);
 			await UsersTableTestHelper.addUser({});
 			await ThreadsTableTestHelper.addThread({});
 			await CommentsTableTestHelper.addComment({});
