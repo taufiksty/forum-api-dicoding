@@ -6,9 +6,11 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const AddedComment = require('../../../Domains/comments/entities/AddedComment');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
+const LikesCommentTableTestHelper = require('../../../../tests/LikesCommentTableTestHelper');
 
 describe('CommentRepositoryPostgres', () => {
 	afterEach(async () => {
+		await LikesCommentTableTestHelper.cleanTable();
 		await CommentsTableTestHelper.cleanTable();
 		await ThreadsTableTestHelper.cleanTable();
 		await UsersTableTestHelper.cleanTable();
@@ -137,7 +139,7 @@ describe('CommentRepositoryPostgres', () => {
 			const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
 			const threadId = 'thread-123';
 			const dateComment1 = new Date();
-			const dateComment2 = new Date();
+			const dateComment2 = new Date(dateComment1.getTime() + 1000);
 			await UsersTableTestHelper.addUser({});
 			await ThreadsTableTestHelper.addThread({});
 			await CommentsTableTestHelper.addComment({ date: dateComment1 });
@@ -186,6 +188,115 @@ describe('CommentRepositoryPostgres', () => {
 
 			// Assert
 			expect(getCommentsByThreadId).toEqual([]);
+		});
+	});
+
+	describe('verifyLikesComment', () => {
+		it('should return 0 if there is no likes from the user on comment', async () => {
+			// Arrange
+			const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+			const commentId = 'comment-123';
+			const userId = 'user-123';
+
+			// Action
+			const verifyLikesComment =
+				await commentRepositoryPostgres.verifyLikesComment(commentId, userId);
+
+			// Assert
+			expect(verifyLikesComment).toEqual(0);
+		});
+
+		it('should return 1 if there is likes from the user on comment', async () => {
+			// Arrange
+			const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+			const commentId = 'comment-123';
+			const userId = 'user-123';
+			await UsersTableTestHelper.addUser({});
+			await ThreadsTableTestHelper.addThread({});
+			await CommentsTableTestHelper.addComment({});
+			await LikesCommentTableTestHelper.addLikesComment({});
+
+			// Action
+			const verifyLikesComment =
+				await commentRepositoryPostgres.verifyLikesComment(commentId, userId);
+
+			// Assert
+			expect(verifyLikesComment).toEqual(1);
+		});
+	});
+
+	describe('getLikesComment', () => {
+		it('should return likes count a comment', async () => {
+			// Arrange
+			const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+			const commentId = 'comment-123';
+			await UsersTableTestHelper.addUser({});
+			await ThreadsTableTestHelper.addThread({});
+			await CommentsTableTestHelper.addComment({});
+			await LikesCommentTableTestHelper.addLikesComment({});
+
+			// Action
+			const getLikesComment = await commentRepositoryPostgres.getLikesCount(
+				commentId,
+			);
+
+			// Assert
+			expect(getLikesComment).toEqual(1);
+		});
+
+		it('should return likes count equal 0 if there are no likes in a comment', async () => {
+			// Arrange
+			const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+			const commentId = 'comment-123';
+			await UsersTableTestHelper.addUser({});
+			await ThreadsTableTestHelper.addThread({});
+			await CommentsTableTestHelper.addComment({});
+
+			// Action
+			const getLikesComment = await commentRepositoryPostgres.getLikesCount(
+				commentId,
+			);
+
+			// Assert
+			expect(getLikesComment).toEqual(0);
+		});
+	});
+
+	describe('updateLikesComment', () => {
+		it('should return comment_id and user_id if user not yet like the comment', async () => {
+			// Arrange
+			const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+			const commentId = 'comment-123';
+			const userId = 'user-123';
+			await UsersTableTestHelper.addUser({});
+			await ThreadsTableTestHelper.addThread({});
+			await CommentsTableTestHelper.addComment({});
+
+			// Action
+			const updateLikesComment =
+				await commentRepositoryPostgres.updateLikesComment(commentId, userId);
+
+			// Assert
+			expect(updateLikesComment[0].comment_id).toEqual(commentId);
+			expect(updateLikesComment[0].user_id).toEqual(userId);
+		});
+
+		it('should return [] if user has like the comment', async () => {
+			// Arrange
+			const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+			const commentId = 'comment-123';
+			const userId = 'user-123';
+			await UsersTableTestHelper.addUser({});
+			await ThreadsTableTestHelper.addThread({});
+			await CommentsTableTestHelper.addComment({});
+			await LikesCommentTableTestHelper.addLikesComment({});
+
+			// Action
+			const updateLikesComment =
+				await commentRepositoryPostgres.updateLikesComment(commentId, userId);
+
+			// Assert
+			expect(updateLikesComment).toEqual([]);
 		});
 	});
 

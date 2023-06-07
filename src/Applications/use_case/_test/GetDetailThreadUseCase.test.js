@@ -95,6 +95,14 @@ describe('GetDetailThreadUseCase', () => {
 				}
 				return [];
 			});
+		mockCommentRepository.getLikesCount = jest
+			.fn()
+			.mockImplementation((commentId) => {
+				if (commentId === 'comment-123') {
+					return 1;
+				}
+				return 0;
+			});
 		mockThreadRepository.getThreadById = jest
 			.fn()
 			.mockImplementation(() => Promise.resolve(threadWithoutComments));
@@ -139,6 +147,7 @@ describe('GetDetailThreadUseCase', () => {
 								username: 'dicoding',
 							},
 						],
+						likeCount: 1,
 					},
 					{
 						id: 'comment-234',
@@ -146,6 +155,7 @@ describe('GetDetailThreadUseCase', () => {
 						date: '2021-08-08T07:26:21.338Z',
 						content: '**komentar telah dihapus**',
 						replies: [],
+						likeCount: 0,
 					},
 				],
 			}),
@@ -156,6 +166,9 @@ describe('GetDetailThreadUseCase', () => {
 		);
 		expect(mockReplyRepository.getRepliesByCommentId).toBeCalledWith(
 			'comment-123',
+		);
+		expect(mockReplyRepository.getRepliesByCommentId).toBeCalledWith(
+			'comment-234',
 		);
 		expect(mockThreadRepository.getThreadById).toBeCalledWith('thread-123');
 	});

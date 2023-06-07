@@ -26,12 +26,15 @@ class GetDetailThreadUseCase {
 				let replies = await this._replyRepository.getRepliesByCommentId(
 					comment.id,
 				);
+				const likeCount = await this._commentRepository.getLikesCount(
+					comment.id,
+				);
 
 				if (replies.length > 0) {
 					replies = replies.map((reply) => new DetailReply(reply));
 				}
 
-				return { ...comment, replies };
+				return { ...comment, likeCount, replies };
 			}),
 		);
 
